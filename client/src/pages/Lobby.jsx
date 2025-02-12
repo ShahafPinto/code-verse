@@ -22,7 +22,7 @@ const Lobby=()=> {
         {codeBlockList.map(block => {
           return (
             <li key={block._id} onClick={handleCodeBlockClick(block._id)}>
-            {block.name}
+            {block.title}
           </li>
           )
         })}
