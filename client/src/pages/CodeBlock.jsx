@@ -10,7 +10,8 @@ const CodeBlock = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { codeBlockList, code, setCode } = useContext(CodeBlockContext);
-
+  const socketUrl = io(import.meta.env.VITE_SOCKET_URL);
+  
   const [currCodeBlock, setCurrCodeBlock] = useState({});
   const [socket, setSocket] = useState(null);
 
@@ -25,10 +26,10 @@ const CodeBlock = () => {
   }, []);
 
   let newSocket;
-
+  
   useEffect(() => {
     if (socket !== null) return;
-    newSocket = io("http://localhost:5000");
+    newSocket = io(socketUrl);
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
