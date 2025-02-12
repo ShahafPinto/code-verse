@@ -63,6 +63,7 @@ io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
   socket.on("joinRoom", (room) => {
+    console.log('in joinRoom socket event, the room is:',room) 
     socket.join(room);
     console.log(`User joined room: ${room}`);
   });
