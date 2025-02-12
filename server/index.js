@@ -62,14 +62,34 @@ const io = new Server(expressServer, {
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  socket.on("joinRoom", (room) => {
-    console.log('in joinRoom socket event, the room is:',room) 
+  socket.on("joinRoom", (room) => { 
     socket.join(room);
-    console.log(`User joined room: ${room}`);
+    
+
+    const usersInRoom = io.sockets.adapter.rooms.get(room)?.size || 0;
+
+    console.log(`User ${socket.id} joined room ${room}`);
+    io.to(room).emit("userCount", usersInRoom);
+
+    // קובע תפקיד: הראשון הוא mentor, השאר students
+    const role = usersInRoom === 1 ? "mentor" : "student";
+    
+    socket.role = role; // שומר את התפקיד באובייקט של הסוקט
+    socket.roomId = room; // שומר לאיזה חדר המשתמש מחובר
+    
+    // שולח לקליינט את התפקיד
+    socket.emit("roleAssigned", role);
   });
 
   socket.on("codeChange", ({ room, code }) => {
     socket.to(room).emit("codeUpdate", code);
+  });
+
+  socket.on("disconnecting", () => {
+    if (socket.role === "mentor" && socket.roomId) {
+      console.log(`Mentor left room ${socket.roomId}, navigating users to lobby`);
+      io.to(socket.roomId).emit("mentorLeft"); // שולח אירוע לכל החדר
+    }
   });
 
   socket.on("disconnect", () => {

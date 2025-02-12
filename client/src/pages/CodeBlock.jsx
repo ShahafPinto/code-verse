@@ -9,21 +9,17 @@ import { CodeBlockContext } from "../context/CodeBlockContext";
 const CodeBlock = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const {
-    codeBlockList,
-    code,
-    setCode,
-  } = useContext(CodeBlockContext);
-  
+  const { codeBlockList, code, setCode } = useContext(CodeBlockContext);
+
   const [currCodeBlock, setCurrCodeBlock] = useState(null);
   const [socket, setSocket] = useState(null);
 
   const [role, setRole] = useState("student"); // ברירת מחדל - סטודנט
-  const [students, setStudents] = useState(0);
+  const [countUsers, setCountUSers] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
 
   useEffect(() => {
-    const currBlock = codeBlockList.find(block => block._id === id);
+    const currBlock = codeBlockList.find((block) => block._id === id);
     setCurrCodeBlock(currBlock);
     setCode(currBlock.template);
   }, []);
@@ -40,25 +36,37 @@ const CodeBlock = () => {
   }, []);
 
   useEffect(() => {
-    if (!newSocket || !currCodeBlock) return;
+    if (!socket || !currCodeBlock) return;
     // התחברות ל-Socket
-    newSocket.emit("joinRoom", currCodeBlock.name);
-
-    // קבלת מספר סטודנטים בחדר
-    newSocket.on("updateStudents", (count) => setStudents(count));
+    socket.emit("joinRoom", currCodeBlock.name);
+    
+    socket.on("userCount", (count) => {
+      //console.log("Users in room:", count);
+      setCountUSers(count-1);
+    });
 
     // קבלת עדכון קוד מ-Socket
-    newSocket.on("codeUpdate", (newCode) => setCode(newCode));
+    socket.on("codeUpdate", (newCode) => setCode(newCode));
 
     // זיהוי התפקיד (הראשון שנכנס הוא מנטור)
-    newSocket.emit("getRole", newSocket.id, (assignedRole) =>
-      setRole(assignedRole)
-    );
+    socket.emit("getRole", socket.id, (assignedRole) => setRole(assignedRole));
+    socket.on("roleAssigned", (role) => {
+      console.log("Assigned role:", role);
+      setRole(role);
+    });
+
+    socket.on("mentorLeft", () => {
+      console.log("Mentor left the room. Returning to lobby.");
+      navigate("/");
+    });
 
     return () => {
-      newSocket.emit("leaveRoom", newSocket.id);
-      newSocket.off("updateStudents");
-      newSocket.off("codeUpdate");
+      socket.emit("leaveRoom", socket.id);
+      socket.off("mentorLeft");
+      socket.off("roleAssigned");
+      socket.off("codeUpdate");
+      socket.off("userCount");
+      
     };
   }, [currCodeBlock]);
 
@@ -73,7 +81,7 @@ const CodeBlock = () => {
     <div>
       <h1>{currCodeBlock?.name}</h1>
       <p>
-        Role: {role} | Students: {students}
+        Role: {role} | Students in room: {countUsers}
       </p>
 
       {role === "mentor" ? (
