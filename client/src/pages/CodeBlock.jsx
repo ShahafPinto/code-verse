@@ -3,36 +3,30 @@ import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import axios from "axios";
 import { useContext } from "react";
 import { CodeBlockContext } from "../context/CodeBlockContext";
 
 const CodeBlock = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { CurrCodeBlock, setCurrCodeBlock } = useContext(CodeBlockContext);
-  console.log("CurrCodeBlock:", CurrCodeBlock);
-
+  const {
+    codeBlockList,
+    code,
+    setCode,
+  } = useContext(CodeBlockContext);
+  
+  const [currCodeBlock, setCurrCodeBlock] = useState(null);
   const [socket, setSocket] = useState(null);
 
-  const [code, setCode] = useState(CurrCodeBlock.template || "");
   const [role, setRole] = useState("student"); // ברירת מחדל - סטודנט
   const [students, setStudents] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-    axios
-      .get(`http://localhost:5000/getCodeBlock/${id}`)
-      .then((CurrCodeBlock) => {
-        setCurrCodeBlock(CurrCodeBlock.data);
-        setCode(CurrCodeBlock.data.template);
-      })
-      .catch((error) => {
-        console.log("error fatching the data:", error);
-        navigate("/");
-      });
-  }, [id]);
+    const currBlock = codeBlockList.find(block => block._id === id);
+    setCurrCodeBlock(currBlock);
+    setCode(currBlock.template);
+  }, []);
 
   let newSocket;
 
@@ -46,9 +40,9 @@ const CodeBlock = () => {
   }, []);
 
   useEffect(() => {
-    if (!newSocket) return;
+    if (!newSocket || !currCodeBlock) return;
     // התחברות ל-Socket
-    newSocket.emit("joinRoom", CurrCodeBlock.name);
+    newSocket.emit("joinRoom", currCodeBlock.name);
 
     // קבלת מספר סטודנטים בחדר
     newSocket.on("updateStudents", (count) => setStudents(count));
@@ -66,18 +60,18 @@ const CodeBlock = () => {
       newSocket.off("updateStudents");
       newSocket.off("codeUpdate");
     };
-  }, [CurrCodeBlock]);
+  }, [currCodeBlock]);
 
   // עדכון קוד ב-Socket
   const handleCodeChange = (e) => {
     setCode(e.target.value);
-    socket.emit("codeUpdate", id, e.target.value);
-    setIsCorrect(e.target.value.trim() === CurrCodeBlock.solution.trim());
+    socket.emit("codeUpdate", currCodeBlock._id, e.target.value);
+    setIsCorrect(e.target.value.trim() === currCodeBlock.solution.trim());
   };
 
   return (
     <div>
-      <h1>{CurrCodeBlock.name}</h1>
+      <h1>{currCodeBlock?.name}</h1>
       <p>
         Role: {role} | Students: {students}
       </p>

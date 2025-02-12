@@ -5,13 +5,7 @@ import { CodeBlockContext } from '../context/CodeBlockContext';
 
 const Lobby=()=> {
   const navigate = useNavigate();
-  const {codeBlockList, setCodeBlockList, setCurrCodeBlock} = useContext(CodeBlockContext);
-  
-  useEffect(() => {
-    axios.get('http://localhost:5000/getCodeBlocks')
-      .then(codeBlockList => setCodeBlockList(codeBlockList.data))
-      .catch(error => console.log(error))
-  }, []);
+  const {codeBlockList, setCurrCodeBlock} = useContext(CodeBlockContext);
 
   const handleCodeBlockClick = (id) => {
     const currCodeBlock = codeBlockList.find(block => block._id === id);

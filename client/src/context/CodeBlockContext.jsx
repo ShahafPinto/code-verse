@@ -1,18 +1,32 @@
-import React, { createContext, useState } from "react";
-
+import React, { createContext, useState, useEffect } from "react";
+import axios from 'axios';
 export const CodeBlockContext = createContext();
 
 export const CodeBlockProvider = ({ children }) => {
   const [codeBlockList, setCodeBlockList] = useState([]);
-  const [CurrCodeBlock, setCurrCodeBlock] = useState({});
+  const [currCodeBlock, setCurrCodeBlock] = useState({});
+  const [code, setCode] = useState(currCodeBlock.template || "");
+
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/getCodeBlocks')
+      .then(codeBlockList => setCodeBlockList(codeBlockList.data))
+      .catch(error => console.log(error))
+  }, []);
+
   
+
+  const handleCodeBlockClick = (id) => {
+    const currCodeBlock = codeBlockList.find(block => block._id === id);
+    setCurrCodeBlock(currCodeBlock);
+  }
   return (
     <CodeBlockContext.Provider
       value={{
         codeBlockList,
         setCodeBlockList,
-        CurrCodeBlock,
-        setCurrCodeBlock,
+        CurrCodeBlock: currCodeBlock,
+        setCurrCodeBlock,code, setCode,handleCodeBlockClick,
       }}
     >
       {children}
