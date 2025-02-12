@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 // Setting the port for the server to listen on
 const port = process.env.PORT || 5000;
 // Connecting to MongoDB
-const uri = process.env.ATLAS_URI;
+const dbUrl = process.env.ATLAS_URL;
 // Starting the Express server
 const expressServer = app.listen(port, (req, res) => {
   console.log(`Server running on port: ${port}`);
@@ -27,7 +27,7 @@ const expressServer = app.listen(port, (req, res) => {
 
 // חיבור ל-MongoDB
 mongoose
-  .connect(uri)
+  .connect(dbUrl)
   .then(() => console.log("MongoDB connection established"))
   .catch((error) => console.log("MongoDB connection fail:", error.message));
 
