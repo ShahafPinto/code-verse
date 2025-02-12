@@ -11,7 +11,7 @@ const CodeBlock = () => {
   const navigate = useNavigate();
   const { codeBlockList, code, setCode } = useContext(CodeBlockContext);
 
-  const [currCodeBlock, setCurrCodeBlock] = useState(null);
+  const [currCodeBlock, setCurrCodeBlock] = useState({});
   const [socket, setSocket] = useState(null);
 
   const [role, setRole] = useState("student"); // ברירת מחדל - סטודנט
@@ -72,8 +72,10 @@ const CodeBlock = () => {
 
   // עדכון קוד ב-Socket
   const handleCodeChange = (e) => {
+    //console.log("Code change:", e.target.value);
     setCode(e.target.value);
-    socket.emit("codeUpdate", currCodeBlock._id, e.target.value);
+    console.log('currCodeBlock.name:',currCodeBlock.name);
+    socket.emit("codeChange", currCodeBlock.name, e.target.value);
     setIsCorrect(e.target.value.trim() === currCodeBlock.solution.trim());
   };
 

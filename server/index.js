@@ -81,7 +81,8 @@ io.on("connection", (socket) => {
     socket.emit("roleAssigned", role);
   });
 
-  socket.on("codeChange", ({ room, code }) => {
+  socket.on("codeChange", ( room, code ) => {
+    console.log(`Code update in room ${room}`);
     socket.to(room).emit("codeUpdate", code);
   });
 
