@@ -8,8 +8,8 @@ const codeBlockModel = require("./Models/CodeBlock");
 
 const app = express();
 
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 // Default route
 app.get("/", (req, res) => {
