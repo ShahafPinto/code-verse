@@ -8,7 +8,7 @@ import { CodeBlockContext } from "../context/CodeBlockContext";
 
 const CodeBlock = () => {
   const { id } = useParams();
-  const socketUrl = io(import.meta.env.VITE_SOCKET_URL);
+  //const socketUrl = io(import.meta.env.VITE_SOCKET_URL);
   
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ const CodeBlock = () => {
 
   useEffect(() => {
     if (socket !== null) return;
-    newSocket = io(socketUrl);
+    newSocket = io('https://code-verse-h9i9.onrender.com');
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
