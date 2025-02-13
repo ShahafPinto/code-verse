@@ -6,13 +6,13 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useContext } from "react";
 import { CodeBlockContext } from "../context/CodeBlockContext";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000"
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
 
 const CodeBlock = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { codeBlockList, code, setCode } = useContext(CodeBlockContext);
-  
+
   const [currCodeBlock, setCurrCodeBlock] = useState({});
   const [socket, setSocket] = useState(null);
   const [role, setRole] = useState("student");
@@ -25,9 +25,6 @@ const CodeBlock = () => {
     setCode(currBlock.template);
   }, []);
 
-  //let newSocket;
-  //newSocket = io('https://code-verse-h9i9.onrender.com');
-  //newSocket = io('http://localhost:5000/');
   useEffect(() => {
     if (socket) return;
     const newSocket = io(SOCKET_URL, { transports: ["websocket"] });
@@ -39,21 +36,16 @@ const CodeBlock = () => {
 
   useEffect(() => {
     if (!socket || !currCodeBlock) return;
-    // התחברות ל-Socket
     socket.emit("joinRoom", currCodeBlock.name);
 
     socket.on("userCount", (count) => {
-      //console.log("Users in room:", count);
       setCountUSers(count - 1);
     });
 
-    // קבלת עדכון קוד מ-Socket
     socket.on("codeUpdate", (newCode) => setCode(newCode));
 
-    // זיהוי התפקיד (הראשון שנכנס הוא מנטור)
     socket.emit("getRole", socket.id, (assignedRole) => setRole(assignedRole));
     socket.on("roleAssigned", (role) => {
-      console.log("Assigned role:", role);
       setRole(role);
     });
 
@@ -69,13 +61,10 @@ const CodeBlock = () => {
       socket.off("codeUpdate");
       socket.off("userCount");
     };
-  }, [socket,currCodeBlock]);
+  }, [socket, currCodeBlock]);
 
-  // עדכון קוד ב-Socket
   const handleCodeChange = (e) => {
-    //console.log("Code change:", e.target.value);
     setCode(e.target.value);
-    console.log("currCodeBlock.name:", currCodeBlock.name);
     socket.emit("codeChange", currCodeBlock.name, e.target.value);
     setIsCorrect(e.target.value.trim() === currCodeBlock.solution.trim());
   };
