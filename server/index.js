@@ -8,29 +8,13 @@ const codeBlockModel = require("./Models/CodeBlock");
 
 const app = express();
 
-const allowedOrigins = [
-  "https://code-verse-dun.vercel.app",
-  "https://code-verse-dxcu4syph-shahafs-projects-d71f5313.vercel.app"
-];
-
 app.use(express.json());
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
+app.use(cors());
 
 // Default route
 app.get("/", (req, res) => {
   res.send("Welcome to code-verse App");
 });
-
-
 
 // Setting the port for the server to listen on
 const port = process.env.PORT || 5000;
@@ -71,7 +55,10 @@ app.get("/getCodeBlock/:id", async (req, res) => {
 });
 // Setting up Socket.IO server on top of Express server
 const io = new Server(expressServer, {
-  cors: { origin: process.env.CLIENT_URL, methods: ["GET", "POST"] },
+  cors: { origin: [
+    "https://code-verse-dun.vercel.app",
+    "https://code-verse-dxcu4syph-shahafs-projects-d71f5313.vercel.app"
+  ], methods: ["GET", "POST"] },
 });
 
 // Socket.io
