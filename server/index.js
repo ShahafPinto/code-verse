@@ -65,7 +65,6 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", (room) => { 
     socket.join(room);
     
-
     const usersInRoom = io.sockets.adapter.rooms.get(room)?.size || 0;
 
     console.log(`User ${socket.id} joined room ${room}`);

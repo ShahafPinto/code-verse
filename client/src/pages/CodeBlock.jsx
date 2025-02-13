@@ -8,14 +8,15 @@ import { CodeBlockContext } from "../context/CodeBlockContext";
 
 const CodeBlock = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const { codeBlockList, code, setCode } = useContext(CodeBlockContext);
   const socketUrl = io(import.meta.env.VITE_SOCKET_URL);
+  
+  const navigate = useNavigate();
+
+  const { codeBlockList, code, setCode } = useContext(CodeBlockContext);
   
   const [currCodeBlock, setCurrCodeBlock] = useState({});
   const [socket, setSocket] = useState(null);
-
-  const [role, setRole] = useState("student"); // ברירת מחדל - סטודנט
+  const [role, setRole] = useState("student");
   const [countUsers, setCountUSers] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
 
@@ -26,7 +27,7 @@ const CodeBlock = () => {
   }, []);
 
   let newSocket;
-  
+
   useEffect(() => {
     if (socket !== null) return;
     newSocket = io(socketUrl);
@@ -40,10 +41,10 @@ const CodeBlock = () => {
     if (!socket || !currCodeBlock) return;
     // התחברות ל-Socket
     socket.emit("joinRoom", currCodeBlock.name);
-    
+
     socket.on("userCount", (count) => {
       //console.log("Users in room:", count);
-      setCountUSers(count-1);
+      setCountUSers(count - 1);
     });
 
     // קבלת עדכון קוד מ-Socket
@@ -67,7 +68,6 @@ const CodeBlock = () => {
       socket.off("roleAssigned");
       socket.off("codeUpdate");
       socket.off("userCount");
-      
     };
   }, [currCodeBlock]);
 
@@ -75,7 +75,7 @@ const CodeBlock = () => {
   const handleCodeChange = (e) => {
     //console.log("Code change:", e.target.value);
     setCode(e.target.value);
-    console.log('currCodeBlock.name:',currCodeBlock.name);
+    console.log("currCodeBlock.name:", currCodeBlock.name);
     socket.emit("codeChange", currCodeBlock.name, e.target.value);
     setIsCorrect(e.target.value.trim() === currCodeBlock.solution.trim());
   };

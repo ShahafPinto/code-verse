@@ -6,11 +6,10 @@ export const CodeBlockProvider = ({ children }) => {
   const [codeBlockList, setCodeBlockList] = useState([]);
   const [currCodeBlock, setCurrCodeBlock] = useState({});
   const [code, setCode] = useState(currCodeBlock.template || "");
-  //const baseUrl = import.meta.env.BASE_URL;
 
   useEffect(() => {
-    //axios.get(`https://code-verse-h9i9.onrender.com/getCodeBlocks`)
-    axios.get(`http://localhost:5000/getCodeBlocks`)
+    axios.get(`https://code-verse-h9i9.onrender.com/getCodeBlocks`)
+    //axios.get(`http://localhost:5000/getCodeBlocks`)
       .then(codeBlockList => setCodeBlockList(codeBlockList.data))
       .catch(error => console.log(error))
   }, []);
