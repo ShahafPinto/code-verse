@@ -10,7 +10,7 @@ export const CodeBlockProvider = ({ children }) => {
     //axios.get(`http://localhost:5000/getCodeBlocks`)
     
   useEffect(() => {
-    axios.get(`http://localhost:5000/getCodeBlocks`)
+    axios.get(`https://code-verse-h9i9.onrender.com/getCodeBlocks`)
       .then(codeBlockList => setCodeBlockList(codeBlockList.data))
       .catch(error => console.log(error))
   }, []);
