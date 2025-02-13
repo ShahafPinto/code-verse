@@ -55,10 +55,7 @@ app.get("/getCodeBlock/:id", async (req, res) => {
 });
 // Setting up Socket.IO server on top of Express server
 const io = new Server(expressServer, {
-  cors: { origin: [
-    "https://code-verse-dun.vercel.app",
-    "https://code-verse-dxcu4syph-shahafs-projects-d71f5313.vercel.app"
-  ], methods: ["GET", "POST"] },
+  cors: { origin: process.env.CLIENT_URL, methods: ["GET", "POST"] },
 });
 
 // Socket.io
@@ -67,7 +64,6 @@ io.on("connection", (socket) => {
 
   socket.on("joinRoom", (room) => { 
     socket.join(room);
-    
     const usersInRoom = io.sockets.adapter.rooms.get(room)?.size || 0;
 
     console.log(`User ${socket.id} joined room ${room}`);
