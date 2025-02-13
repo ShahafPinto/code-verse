@@ -12,6 +12,11 @@ This project provides an interactive coding environment where users can join roo
 - The number of connected students in each room updates in real-time.
 - The mentor has read-only access to the code, while students can edit the code. Any changes made by a student are updated in real-time for all users in the same room.
 - If the student enters the correct code, a smiley face appears on the screen.
+    - Example of a correct solution for the "Function case" room:
+      ```bash
+      function addNumbers(a, b) {
+         return a + b;
+      }
 - If the mentor leaves the room, all connected users are redirected to the main page.
 
 ## Running the Project
