@@ -6,12 +6,11 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useContext } from "react";
 import { CodeBlockContext } from "../context/CodeBlockContext";
 
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000"
+
 const CodeBlock = () => {
   const { id } = useParams();
-  //const socketUrl = io(import.meta.env.VITE_SOCKET_URL);
-  
   const navigate = useNavigate();
-
   const { codeBlockList, code, setCode } = useContext(CodeBlockContext);
   
   const [currCodeBlock, setCurrCodeBlock] = useState({});
@@ -26,11 +25,12 @@ const CodeBlock = () => {
     setCode(currBlock.template);
   }, []);
 
-  let newSocket;
-
+  //let newSocket;
+  //newSocket = io('https://code-verse-h9i9.onrender.com');
+  //newSocket = io('http://localhost:5000/');
   useEffect(() => {
-    if (socket !== null) return;
-    newSocket = io('https://code-verse-h9i9.onrender.com');
+    if (socket) return;
+    const newSocket = io(SOCKET_URL, { transports: ["websocket"] });
     setSocket(newSocket);
     return () => {
       newSocket.disconnect();
@@ -69,7 +69,7 @@ const CodeBlock = () => {
       socket.off("codeUpdate");
       socket.off("userCount");
     };
-  }, [currCodeBlock]);
+  }, [socket,currCodeBlock]);
 
   // עדכון קוד ב-Socket
   const handleCodeChange = (e) => {
