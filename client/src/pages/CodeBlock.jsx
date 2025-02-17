@@ -48,7 +48,7 @@ const CodeBlock = () => {
     socket.on("codeUpdate", (newCode) => setCode(newCode));
 
     //socket.emit("getRole", socket.id, (assignedRole) => setRole(assignedRole));
-    
+
     socket.on("roleAssigned", (role) => {
       setRole(role);
     });
