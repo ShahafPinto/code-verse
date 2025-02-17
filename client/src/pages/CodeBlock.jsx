@@ -30,7 +30,10 @@ const CodeBlock = () => {
     const newSocket = io(SOCKET_URL, { transports: ["websocket"] });
     setSocket(newSocket);
     return () => {
-      newSocket.disconnect();
+      if (newSocket.connected) {
+        newSocket.disconnect();
+      }
+      //newSocket.disconnect();
     };
   }, []);
 
@@ -44,7 +47,8 @@ const CodeBlock = () => {
 
     socket.on("codeUpdate", (newCode) => setCode(newCode));
 
-    socket.emit("getRole", socket.id, (assignedRole) => setRole(assignedRole));
+    //socket.emit("getRole", socket.id, (assignedRole) => setRole(assignedRole));
+    
     socket.on("roleAssigned", (role) => {
       setRole(role);
     });
@@ -55,7 +59,7 @@ const CodeBlock = () => {
     });
 
     return () => {
-      socket.emit("leaveRoom", socket.id);
+      //socket.emit("leaveRoom", socket.id);
       socket.off("mentorLeft");
       socket.off("roleAssigned");
       socket.off("codeUpdate");

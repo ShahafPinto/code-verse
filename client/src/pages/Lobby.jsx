@@ -4,11 +4,11 @@ import { CodeBlockContext } from "../context/CodeBlockContext";
 
 const Lobby = () => {
   const navigate = useNavigate();
-  const { codeBlockList, setCurrCodeBlock } = useContext(CodeBlockContext);
+  const { codeBlockList } = useContext(CodeBlockContext);
 
   const handleCodeBlockClick = (id) => {
-    const currCodeBlock = codeBlockList.find((block) => block._id === id);
-    setCurrCodeBlock(currCodeBlock);
+    //const currCodeBlock = codeBlockList.find((block) => block._id === id);
+    //setCurrCodeBlock(currCodeBlock);
     return () => {
       navigate(`/codeblock/${id}`);
     };
