@@ -70,7 +70,8 @@ const CodeBlock = () => {
   const handleCodeChange = (e) => {
     setCode(e.target.value);
     socket.emit("codeChange", currCodeBlock.name, e.target.value);
-    setIsCorrect(e.target.value.trim() === currCodeBlock.solution.trim());
+    //change the trim to replace without all the whitespaces:
+    setIsCorrect(e.target.value.replace(/\s/g, "") === currCodeBlock.solution.replace(/\s/g, ""));
   };
 
   return (
